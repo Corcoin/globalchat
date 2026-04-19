@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Public Chat</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: monospace;
+            background: #0d1117;
+            color: #e6edf3;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #chat {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        #bar {
+            display: flex;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+            background: #161b22;
+            color: white;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background: #238636;
+            color: white;
+            cursor: pointer;
+        }
+
+        .msg {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat"></div>
+
+<div id="bar">
+    <input id="input" placeholder="Type message..." />
+    <button onclick="send()">Send</button>
+</div>
+
+<script>
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+
+// connect to server
+const ws = new WebSocket("ws://localhost:3600");
+
+ws.onmessage = (event) => {
+    const div = document.createElement("div");
+    div.className = "msg";
+    div.textContent = event.data;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+};
+
+function send() {
+    if (!input.value) return;
+    ws.send(input.value);
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
